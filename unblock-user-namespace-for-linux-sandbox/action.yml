@@ -22,6 +22,4 @@ runs:
   using: composite
   steps:
     - name: Allow linux-sandbox to create user namespace
-      run: |
-        bash actions/unblock_user_namespace_for_linux_sandbox/action_callable.sh
-      shell: bash
+      run: action_callable.sh"
