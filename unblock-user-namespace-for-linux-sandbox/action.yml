@@ -22,5 +22,5 @@ runs:
   using: composite
   steps:
     - name: Allow linux-sandbox to create user namespace
-      run: action_callable.sh"
+      run: ./action_callable.sh
       shell: bash
