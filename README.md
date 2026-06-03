@@ -16,7 +16,7 @@ This repo includes self-test workflows for (some of) the provided actions in the
 
 - [`test-setup-qnx-sdp.yml`](./.github/workflows/test-setup-qnx-sdp.yml) tests the [`setup-qnx-sdp`](./setup-qnx-sdp/README.md) action by configuring it with a fake license and then verifying that the license file and environment variables are correctly set up.
 
-- [`test-unblock-user-namespace-for-linux-sandbox.yml`](./.github/workflows/test-unblock-user-namespace-for-linux-sandbox.yml) tests the [`unblock_user_namespace_for_linux_sandbox`](./unblock_user_namespace_for_linux_sandbox/action.yml) action by verifying that `linux-sandbox /bin/true` fails before running the action and succeeds after.
+- [`test-unblock-user-namespace-for-linux-sandbox.yml`](./.github/workflows/test-unblock-user-namespace-for-linux-sandbox.yml) tests the [`unblock_user_namespace_for_linux_sandbox`](./unblock-user-namespace-for-linux-sandbox/README.md) action by verifying that `linux-sandbox /bin/true` fails before running the action and succeeds after.
 
 These workflows are reusable (`workflow_call`) and are executed from the [`PR workflow`](./.github/workflows/_local_on_pr.yml)
 
