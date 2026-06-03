@@ -71,7 +71,7 @@ jobs:
         run: bazel clean --expunge
 
       - name: Run unblock action
-        uses: ./unblock_user_namespace_for_linux_sandbox
+        uses: ./unblock-user-namespace-for-linux-sandbox
 
       - name: Verify linux-sandbox succeeds after action
         shell: bash
