@@ -22,6 +22,5 @@ runs:
   using: composite
   steps:
     - name: Allow linux-sandbox to create user namespace
-      run: |
-        bash "${{ github.action_path }}/action_callable.sh"
+      run: "${{ github.action_path }}/action_callable.sh"
       shell: bash
