@@ -12,11 +12,13 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 set -euo pipefail
+
+ if ! command -v bazel >/dev/null 2>&1; then
+   echo "ERROR: bazel is required for this action"
+   exit 1
+ fi
+
 INSTALL_BASE=$(bazel info install_base)
-if [[ -z "${INSTALL_BASE}" ]]; then
-  echo "ERROR: 'bazel info install_base' returned an empty path."
-  exit 1
-fi
 sudo bash -c "cat >/etc/apparmor.d/score-linux-sandbox" <<-EOF
 abi <abi/4.0>,
 include <tunables/global>
