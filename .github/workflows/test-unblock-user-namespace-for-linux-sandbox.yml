@@ -1,0 +1,81 @@
+# *******************************************************************************
+# Copyright (c) 2026 Contributors to the Eclipse Foundation
+#
+# See the NOTICE file(s) distributed with this work for additional
+# information regarding copyright ownership.
+#
+# This program and the accompanying materials are made available under the
+# terms of the Apache License Version 2.0 which is available at
+# https://www.apache.org/licenses/LICENSE-2.0
+#
+# SPDX-License-Identifier: Apache-2.0
+# *******************************************************************************
+
+name: Test Unblock User Namespace For Linux Sandbox
+
+on:
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  unblock-user-namespace:
+    name: linux-sandbox fails before and works after action
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd #v6.0.2
+
+      - name: Create minimal Bazel workspace
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo 'module(name = "sandbox_test")' > "${GITHUB_WORKSPACE}/MODULE.bazel"
+          echo '8.3.0' > "${GITHUB_WORKSPACE}/.bazelversion"
+
+      - uses: bazel-contrib/setup-bazel@c5acdfb288317d0b5c0bbd7a396a3dc868bb0f86 # 0.19.0
+        with:
+          # Avoid downloading Bazel every time.
+          bazelisk-cache: true
+          # Store build cache per workflow.
+          disk-cache: ${{ github.workflow }}
+          # Share repository cache between workflows.
+          repository-cache: true
+
+      - name: Resolve linux-sandbox binary path
+        id: sandbox
+        shell: bash
+        run: |
+          set -euo pipefail
+          INSTALL_BASE="$(bazel info install_base)"
+          SANDBOX_BIN="${INSTALL_BASE}/linux-sandbox"
+          if [[ ! -x "${SANDBOX_BIN}" ]]; then
+            echo "ERROR: linux-sandbox binary not found at ${SANDBOX_BIN}"
+            exit 1
+          fi
+          echo "sandbox_bin=${SANDBOX_BIN}" >> "${GITHUB_OUTPUT}"
+
+      - name: Verify linux-sandbox fails before action
+        shell: bash
+        run: |
+          set -euo pipefail
+          if "${{ steps.sandbox.outputs.sandbox_bin }}" /bin/true; then
+            echo "ERROR: linux-sandbox /bin/true unexpectedly succeeded before running the action"
+            exit 1
+          fi
+          echo "linux-sandbox /bin/true failed before action as expected"
+
+      - name: Kill all bazel processes
+        run: bazel clean --expunge
+
+      - name: Run unblock action
+        uses: ./unblock-user-namespace-for-linux-sandbox
+
+      - name: Verify linux-sandbox succeeds after action
+        shell: bash
+        run: |
+          set -euo pipefail
+          "${{ steps.sandbox.outputs.sandbox_bin }}" /bin/true
+          echo "linux-sandbox /bin/true succeeded after action"

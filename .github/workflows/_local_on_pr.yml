@@ -34,3 +34,8 @@ jobs:
     uses: ./.github/workflows/test-setup-qnx-sdp.yml
     permissions:
       contents: read
+
+  unblock-user-namespace-for-linux-sandbox-tests:
+    uses: ./.github/workflows/test-unblock-user-namespace-for-linux-sandbox.yml
+    permissions:
+      contents: read
